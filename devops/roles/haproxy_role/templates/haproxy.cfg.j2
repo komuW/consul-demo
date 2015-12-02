@@ -50,5 +50,5 @@ backend server
     option httpchk HEAD / HTTP/1.1\r\nHost:localhost
     http-request set-header X-Forwarded-Port %[dst_port]
     {% for host in groups['app_servers'] %}
-        server {{ host }}   {{ host }}:{{ APP_PORT }} check
+        server {{ host }}   {{ host }}:{{ GUNICORN_PORT }} check
     {% endfor %}
