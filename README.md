@@ -43,3 +43,27 @@
   ]
 
 #u can update service configs and just end SIGHUP to agent
+
+
+#create server-agent
+> vagrant ssh lb
+> consul agent -server -bootstrap-expect 1 -data-dir /tmp/ -node=agent-one -bind=20.0.0.2 #-bind is the private ip 
+              #note; the server variable
+
+#create client-agent
+> vagrant ssh appOne
+> consul agent -data-dir /tmp/ -node=agent-two -bind=20.0.0.3
+            #note; no server variable
+> consul members #not yet linked
+
+#joining cluster
+> vagrant ssh lb
+> consul join 20.0.0.3 #20.0.0.3 is ip of second server(client)
+#To join a cluster, a Consul agent only needs to learn about one existing member.
+
+> consul members
+	Node       Address        Status  Type    Build  Protocol  DC
+	agent-two  20.0.0.3:8301  alive   client  0.5.2  2         dc1
+	agent-one  20.0.0.2:8301  alive   server  0.5.2  2         dc1
+
+
