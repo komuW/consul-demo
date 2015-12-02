@@ -1,0 +1,41 @@
+---
+# This role installs HAProxy and configures it.
+- name: 'Add haproxy apt repo'
+  apt_repository: repo="ppa:vbernat/haproxy-{{HAPROXY_VERSION}}" state=present update_cache=yes
+
+- name: Download and install haproxy and socat
+  apt: name={{ item }} state=present
+  with_items:
+  - haproxy
+  - socat
+
+- name: Configure the haproxy cnf file with hosts
+  template: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
+  notify: restart haproxy
+  when: " 'load_balancers' in {{ group_names }}"
+  tags:
+    - config_haproxy
+
+- name: create directories
+  file: >
+    state=directory
+    path="{{ item }}"
+    owner=syslog
+    group=adm
+  with_items:
+    - "{{ haproxy_log_path }}"
+
+- name: generate logrotate config
+  template: >
+    src=haproxy-logrotate.j2
+    dest="{{ haproxy_logrotate_config }}"
+
+- name: generate syslog config
+  template: >
+    src=haproxy-rsyslog.cfg.j2
+    dest="{{ haproxy_rsyslog_conf }}"
+  notify:
+    - restart rsyslog
+
+- name: Start the haproxy service
+  service: name=haproxy state=started enabled=yes

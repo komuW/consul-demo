@@ -1,0 +1,28 @@
+# Compiled Python modules
+*.pyo
+*.pyc
+
+# SQLite
+*.db
+*.s3db
+*.sqlite3
+
+# Supervisor files
+supervisord.log
+supervisord.pid
+supervisord.conf
+
+# Vagrant private files
+.vagrant/*
+log
+celerybeat-schedule
+/celerybeatdir
+
+#logs
+*.log
+
+#pids
+*.pid
+
+#ignore static folder
+/static

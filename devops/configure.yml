@@ -1,0 +1,23 @@
+---
+- {hosts: all, sudo: yes, roles: [ apt_sources_role ], tags: [apt_sources] }
+
+- { hosts: all, sudo: yes, roles: [ locale_role ], tags: [ locale ] }
+
+- hosts: all
+  sudo: yes
+  roles:
+    - role: common_role
+      tags:
+        - common_role
+
+- hosts: lb_servers
+  sudo: yes
+  roles:
+    - role: haproxy_role
+
+- hosts: app_servers
+  sudo: yes
+  roles: 
+    - { role: app_role, tags: [ app_role ] }
+  tags:
+    - app

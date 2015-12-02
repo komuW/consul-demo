@@ -1,0 +1,8 @@
+haproxy_logrotate_config: /etc/logrotate.d/haproxy
+
+haproxy_rsyslog_priority: 49
+haproxy_rsyslog_conf: "/etc/rsyslog.d/{{ haproxy_rsyslog_priority }}-haproxy.conf"
+
+haproxy_log_path: /var/log/haproxy
+haproxy_log_info: "{{ haproxy_log_path }}/info.log"
+haproxy_log_notice: "{{ haproxy_log_path }}/notice.log"

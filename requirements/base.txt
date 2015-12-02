@@ -1,0 +1,6 @@
+Django==1.8.4
+requests==2.7.0
+gunicorn==19.3.0
+django-extensions==1.5.5
+celery==3.1.18
+structlog==15.2.0

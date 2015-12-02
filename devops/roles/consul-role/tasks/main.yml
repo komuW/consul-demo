@@ -1,0 +1,8 @@
+---
+
+- name: download consul
+  shell: wget --directory-prefix=/tmp https://releases.hashicorp.com/consul/0.5.2/consul_0.5.2_linux_amd64.zip
+
+- name: unzip consul
+  command: unzip consul_0.5.2_linux_amd64.zip chdir=/tmp
+

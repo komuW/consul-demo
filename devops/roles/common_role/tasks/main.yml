@@ -1,0 +1,41 @@
+---
+
+# tasks to be run on all nodes
+- name: remove potential apt lock 
+  command: sudo rm -rf /var/cache/apt/archives/lock && sudo rm -rf /var/lib/dpkg/lock && sudo rm /var/cache/debconf/*.dat && sudo rm /var/lib/apt/lists/lock
+
+- name: update system
+  command: sudo apt-get -y update
+
+- name: Install SSH keys for authorized users
+  authorized_key: 
+    user: "{{ ansible_ssh_user }}"
+    key: "{{ lookup('file', 'item') }}"
+  with_fileglob: 
+    public_keys/*.pub
+  tags:
+  - add_key
+
+- name: fix broken dependencies
+  command: sudo apt-get -f -y install
+
+- name: configure
+  command: sudo dpkg --configure -a
+
+- name: install unzip
+  command: sudo apt-get -y install unzip
+
+- name: download consul
+  shell: wget --directory-prefix=/tmp https://releases.hashicorp.com/consul/0.5.2/consul_0.5.2_linux_amd64.zip
+
+- name: unzip consul
+  command: unzip -n consul_0.5.2_linux_amd64.zip chdir=/tmp
+
+- name: copy consul to bin
+  command: cp consul /usr/local/bin chdir=/tmp
+
+- name: create consul data dir 
+  command: mkdir -p /tmp/consul-data-dir
+
+- name: rm consul zip files
+  command: rm -rf consul_* chdir=/tmp

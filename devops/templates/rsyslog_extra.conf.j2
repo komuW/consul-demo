@@ -1,0 +1,66 @@
+#learn more here:
+#https://sematext.atlassian.net/wiki/display/PUBLOGSENE/rsyslog#rsyslog-UDP,TCP,TLSorRELP
+
+# add once
+module(load="imfile" mode="inotify" PollingInterval="30")
+#mode=inotify or polling(resource intensive)
+#pollingInterval is only used if mode=polling and its in seconds
+
+# for every file
+input(type="imfile"
+  File="{{APP_DIR}}/log/celery.log" # the file to monitor
+  Tag="celery_log"                  # syslog tag attributed to those events
+  StateFile="celery_state_log"      # state file to remember where it left between restarts.
+  ReadMode="2"                      # support indented multi-line logs.
+)
+
+input(type="imfile"
+  File="{{APP_DIR}}/log/gunicorn.log"
+  Tag="gunicorn_log"
+  StateFile="gunicorn_state_log"
+  ReadMode="2"
+)
+
+input(type="imfile"
+  File="{{APP_DIR}}/log/gunicorn_access.log"
+  Tag="gunicorn_access_log"
+  StateFile="gunicorn_access_state_log"
+  ReadMode="2"
+)
+
+input(type="imfile"
+  File="{{APP_DIR}}/log/monit.log"
+  Tag="monit_log"
+  StateFile="monit_state_log"
+  ReadMode="2"
+)
+
+input(type="imfile"
+  File="/var/log/postgresql/*.log" #note, wildcards dont work in polling mode
+  Tag="postgresql_log"
+  StateFile="postgresql_state_log"
+  ReadMode="2"
+)
+
+#configure the template
+template(
+  name="LogseneFormat"
+  type="list"
+) {
+  # standard syslog fields
+  constant(value="<")
+    property(name="pri")
+  constant(value=">")
+  property(name="timereported" dateFormat="rfc3339")
+  constant(value=" ")
+    property(name="hostname")
+  constant(value=" ")
+  property(name="syslogtag")
+  # CEE-formatted JSON message over syslog
+  constant(value="@cee: {\"logsene-app-token\": \"{{LOGSENE_APP_TOKEN}}\", \"message\": \"")
+  property(name="msg" format="json")                        # original syslog message goes in the "message" field
+  constant(value="\"}\n")
+}
+
+
+*.* @@logsene-receiver-syslog.sematext.com;LogseneFormat
