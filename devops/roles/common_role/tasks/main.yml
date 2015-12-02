@@ -39,3 +39,7 @@
 
 - name: rm consul zip files
   command: rm -rf consul_* chdir=/tmp
+
+- name: add consul service discovery file
+  shell: sudo mkdir -p /etc/consul.d
+
