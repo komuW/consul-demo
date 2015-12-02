@@ -52,3 +52,4 @@ backend server
     {% for host in groups['app_servers'] %}
         server {{ host }}   {{ host }}:{{ GUNICORN_PORT }} check
     {% endfor %}
+

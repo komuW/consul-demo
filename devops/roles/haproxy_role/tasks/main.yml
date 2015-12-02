@@ -12,7 +12,6 @@
 - name: Configure the haproxy cnf file with hosts
   template: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
   notify: restart haproxy
-  when: " 'load_balancers' in {{ group_names }}"
   tags:
     - config_haproxy
 
