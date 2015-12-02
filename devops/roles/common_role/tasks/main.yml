@@ -4,8 +4,8 @@
 - name: remove potential apt lock 
   command: sudo rm -rf /var/cache/apt/archives/lock && sudo rm -rf /var/lib/dpkg/lock && sudo rm /var/cache/debconf/*.dat && sudo rm /var/lib/apt/lists/lock
 
-- name: update system
-  command: sudo apt-get -y update
+- name: Update package cache if last run was more than 6 hours ago
+  apt: update_cache=yes cache_valid_time={{ 60 * 60 * 6 }}
 
 - name: Install SSH keys for authorized users
   authorized_key: 
