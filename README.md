@@ -67,3 +67,7 @@
 	agent-one  20.0.0.2:8301  alive   server  0.5.2  2         dc1
 
 
+#querying nodes
+> vagrant ssh lb
+> dig @127.0.0.1 -p 8600 agent-two.node.consul #NAME.node.consul
+
